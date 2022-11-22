@@ -14,7 +14,7 @@ protocol BluetoothProtocol {
     func value(data: Data)
     func rssi(value: Int)
 }
-
+// object-c 관련 기능인데 일단 넘어가자 뭔 소리인지 모르겠음 문서봐도
 final class Bluetooth: NSObject {
     static let shared = Bluetooth()
     var delegate: BluetoothProtocol?
@@ -41,6 +41,7 @@ final class Bluetooth: NSObject {
             guard let current = current else { return }
             manager?.cancelPeripheralConnection(current)
             manager?.connect(peripheral, options: nil)
+            print("hey?")
         } else { manager?.connect(peripheral, options: nil) }
     }
     
@@ -61,6 +62,7 @@ final class Bluetooth: NSObject {
     func send(_ value: [UInt8]) {
         guard let characteristic = writeCharacteristic else { return }
         current?.writeValue(Data(value), for: characteristic, type: .withResponse)
+        print("hey")
     }
     
     enum State { case unknown, resetting, unsupported, unauthorized, poweredOff, poweredOn, error, connected, disconnected }
@@ -122,11 +124,13 @@ extension Bluetooth: CBPeripheralDelegate {
         }
     }
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-//        print(peripheral)
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@peripheral is \(peripheral)@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         guard let characteristics = service.characteristics else { return }
-//        print(characteristics)
+        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@characteristics is \(characteristics)@@@@@@@@@@@@@@@@@@@@@")
         for characteristic in characteristics {
-//            print(characteristic.properties)
+            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            print(characteristic.properties)
+            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             switch characteristic.properties {
             case .read:
                 readCharacteristic = characteristic

@@ -32,6 +32,11 @@ struct ContentView: View {
     @State var state: Bool = false { didSet { bluetooth.send([UInt8(state.int)]) } }
     
     @State var editing = false
+    
+    
+ // 보여지는 부분이다.
+ // react로 치면 function SomePage{ return (이부분이다.)}
+    
     var body: some View {
         VStack{
             HStack{
@@ -43,18 +48,18 @@ struct ContentView: View {
             
             }
             if isConnected {
-//                Slider(value: Binding( get: { value }, set: {(newValue) in sendValue(newValue) } ), in: 0...100).padding(.horizontal)
-//                Button("toggle"){ state.toggle() }.buttonStyle(appButton())
+                Slider(value: Binding( get: { value }, set: {(newValue) in sendValue(newValue) } ), in: 0...100).padding(.horizontal)
+                Button("toggle"){ state.toggle() }.buttonStyle(appButton())
                 TextField("how to string convert byte", text: $string, onEditingChanged: { editing = $0 })
                     .onChange(of: string){ bluetooth.send(Array($0.utf8)) }
                     .textFieldStyle(appTextField(focused: $editing))
-                Text("returned byte value from \(bluetooth.current?.name ?? ""): \(response.hex)")
-                
-                
-                Text(string)
-                
+                Text("returned byte value from \(bluetooth.current?.name ?? ""): \(response)")
+                Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDEEFFFE".utf8))}
+                Button("Print"){print("Hey?")}
                 Text("returned string: \(String(data: response, encoding: .utf8) ?? "")")
                 Text("rssi: \(rssi)")
+                
+//                Button("NOTIFY"){bluetooth.peripheral(, didUpdateNotificationStateFor: , error: print("notify error"))}
             }
             Spacer()
         }.sheet(isPresented: $presented){ ScanView(bluetooth: bluetooth, presented: $presented, list: $list, isConnected: $isConnected) }
@@ -76,6 +81,10 @@ struct ContentView: View {
 }
 
 extension ContentView: BluetoothProtocol {
+    // 접속 상태에 대한 부분이다.
+    // 그럼 기능은 어떻게 사용할 수 있지?
+    // 서비스는 어디서 어떻게 볼 수 있지?
+    // 문서로는 알지만 눈으로 직접 보고 싶다만
     func state(state: Bluetooth.State) {
         switch state {
         case .unknown: print("◦ .unknown")
@@ -87,8 +96,9 @@ extension ContentView: BluetoothProtocol {
         case .error: print("• error")
         case .connected:
             print("◦ connected to \(bluetooth.current?.name ?? "")")
+//            print("bluetooth is \(bluetooth)")
 //            print(bluetooth)
-//            print(bluetooth.current)
+           
             isConnected = true
         case .disconnected:
             print("◦ disconnected")
