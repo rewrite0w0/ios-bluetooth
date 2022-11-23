@@ -41,7 +41,6 @@ final class Bluetooth: NSObject {
             guard let current = current else { return }
             manager?.cancelPeripheralConnection(current)
             manager?.connect(peripheral, options: nil)
-            print("hey?")
         } else { manager?.connect(peripheral, options: nil) }
     }
     
@@ -61,8 +60,11 @@ final class Bluetooth: NSObject {
     
     func send(_ value: [UInt8]) {
         guard let characteristic = writeCharacteristic else { return }
+        print(characteristic)
         current?.writeValue(Data(value), for: characteristic, type: .withResponse)
-        print("hey")
+        print(value)
+        
+        print("send off fy")
     }
     
     enum State { case unknown, resetting, unsupported, unauthorized, poweredOff, poweredOn, error, connected, disconnected }
@@ -119,34 +121,95 @@ extension Bluetooth: CBCentralManagerDelegate {
 extension Bluetooth: CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
+   
         for service in services {
+//            print("#")
+//            print(services)
+//            print("#")
+//            print(service)
+//            print("#")
+//            print(peripheral)
+//            print("#")
             peripheral.discoverCharacteristics(nil, for: service)
         }
     }
+    
+    
+    
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@peripheral is \(peripheral)@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+//        print("#")
+//        print(service)
+//        print("#")
+        
+//        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@peripheral is \(peripheral)@@86@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         guard let characteristics = service.characteristics else { return }
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@characteristics is \(characteristics)@@@@@@@@@@@@@@@@@@@@@")
-        for characteristic in characteristics {
-            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            print(characteristic.properties)
-            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            switch characteristic.properties {
-            case .read:
-                readCharacteristic = characteristic
-            case .write:
-                writeCharacteristic = characteristic
-            case .notify:
-                notifyCharacteristic = characteristic
-                peripheral.setNotifyValue(true, for: characteristic)
-            case .indicate: break //print("indicate")
-            case .broadcast: break //print("broadcast")
-            default: break
+        
+//        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@characteristics is \(characteristics)@@@@@@@@@@@@@@@@@@@@@")
+//        print("#")
+//        print(service)
+//        print("#")
+        
+            for characteristic in characteristics  {
+//                print("                                              ")
+//                print(characteristic)
+//                print("                                               ")
+                switch characteristic.properties {
+//
+                case .read:
+                    readCharacteristic = characteristic
+                case .write:
+                    writeCharacteristic = characteristic
+                case .notify:
+                    notifyCharacteristic = characteristic
+                    peripheral.setNotifyValue(true, for: characteristic)
+                case .indicate: break //print("indicate")
+                case .broadcast: break //print("broadcast")
+                default: break
+                
+                
+                
+//                            switch characteristic.uuid.uuidString{
+//                            case "FF01":
+//                                print("noti on2?")
+//
+//                                peripheral.setNotifyValue(true, for: characteristic)
+////                                print(characteristics)
+//                                print(characteristic)
+//                                print(characteristic.isNotifying)
+//                            case "FF02":
+//                                peripheral.setNotifyValue(true, for: characteristics[0])
+//
+//                            default:break
+//                            }
             }
         }
     }
-    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) { }
-    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) { }
+    
+    
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
+        print("@@@@@@@@@@@@@@@@@@")
+//        print(peripheral.writeValue(<#T##data: Data##Data#>, for: <#T##CBCharacteristic#>, type: <#T##CBCharacteristicWriteType#>))
+        func send(_ value: [UInt8]) {
+            guard let characteristic = writeCharacteristic else { return }
+            print(characteristic)
+            current?.writeValue(Data(value), for: characteristic, type: .withResponse)
+            print(value)
+            
+            print("send off fy")
+        }
+        
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+//        print("@@@@@@@@@@@@@@@@@@")
+//        print(characteristic)
+//        print(peripheral)
+        peripheral.setNotifyValue(true, for: characteristic)
+//        print(characteristic.isNotifying)
+//        print("@@@@@@@@@@@@@@@@@@")
+    }
+    
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         guard let value = characteristic.value else { return }
         delegate?.value(data: value)

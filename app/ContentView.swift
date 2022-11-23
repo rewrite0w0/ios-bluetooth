@@ -48,15 +48,18 @@ struct ContentView: View {
             
             }
             if isConnected {
-                Slider(value: Binding( get: { value }, set: {(newValue) in sendValue(newValue) } ), in: 0...100).padding(.horizontal)
-                Button("toggle"){ state.toggle() }.buttonStyle(appButton())
-                TextField("how to string convert byte", text: $string, onEditingChanged: { editing = $0 })
-                    .onChange(of: string){ bluetooth.send(Array($0.utf8)) }
-                    .textFieldStyle(appTextField(focused: $editing))
+//                Slider(value: Binding( get: { value }, set: {(newValue) in sendValue(newValue) } ), in: 0...100).padding(.horizontal)
+//                Button("toggle"){ state.toggle() }.buttonStyle(appButton())
+//                TextField("how to string convert byte", text: $string, onEditingChanged: { editing = $0 })
+//                    .onChange(of: string){ bluetooth.send(Array($0.utf8)) }
+//                    .textFieldStyle(appTextField(focused: $editing))
                 Text("returned byte value from \(bluetooth.current?.name ?? ""): \(response)")
+//                Button("how to on notify"){bluetooth.peripherals}
                 Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDEEFFFE".utf8))}
-                Button("Print"){print("Hey?")}
+                Spacer()
+//                Button("Print"){print(Array("FF0770AAAAAAAAAAAAFE".utf8))}
                 Text("returned string: \(String(data: response, encoding: .utf8) ?? "")")
+//                Button("qweqwe"){print(bluetooth.send)}
                 Text("rssi: \(rssi)")
                 
 //                Button("NOTIFY"){bluetooth.peripheral(, didUpdateNotificationStateFor: , error: print("notify error"))}
