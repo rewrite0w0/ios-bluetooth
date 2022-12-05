@@ -23,7 +23,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>블루투스 늘 사용한다는 설정?</string>
+	<string>사용하려구요</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>블루투스 설명</string>
 	<key>UIApplicationSceneManifest</key>

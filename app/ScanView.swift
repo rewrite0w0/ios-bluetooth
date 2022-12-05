@@ -42,6 +42,7 @@ struct ScanView: View {
                 HStack{
                     Text(peripheral.uuid).font(.system(size: 10)).foregroundColor(.gray)
                     Spacer()
+                    Text(peripheral.rssi.description).font(.system(size: 10)).foregroundColor(.gray)
                 }
             }
         }.listStyle(InsetGroupedListStyle()).onAppear{

@@ -29,18 +29,20 @@ final class Bluetooth: NSObject {
     private var notifyCharacteristic: CBCharacteristic?
     private var timer: Timer?
     
-    
     private override init() {
         super.init()
         manager = CBCentralManager(delegate: self, queue: .none)
         manager?.delegate = self
+//        print(manager)
     }
     
     func connect(_ peripheral: CBPeripheral) {
+        print(peripheral)
         if current != nil {
             guard let current = current else { return }
             manager?.cancelPeripheralConnection(current)
             manager?.connect(peripheral, options: nil)
+            
         } else { manager?.connect(peripheral, options: nil) }
     }
     
@@ -59,7 +61,23 @@ final class Bluetooth: NSObject {
     }
     
     func send(_ value: [UInt8]) {
+//        print("Read")
+//        print(readCharacteristic)
+//        print("noti")
+//        print(notifyCharacteristic)
+//        print("write")
+//        print(writeCharacteristic)
+//        print("qwer")
+//        print(qwer)
+        
+    // 여기부터 문제임
+        // hex 보내기
+        // uuid 수동 입력하기
+//        print("qweqwe)")
         guard let characteristic = writeCharacteristic else { return }
+
+        print("i'm send")
+//        if(characteristic.isNotifying){print("ok")} else {print("gg")}
         print(characteristic)
         current?.writeValue(Data(value), for: characteristic, type: .withResponse)
         print(value)
@@ -106,6 +124,7 @@ extension Bluetooth: CBCentralManagerDelegate {
         current = nil
         state = .disconnected
         timer?.invalidate()
+//        print(timer)
     }
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         current = peripheral
@@ -123,13 +142,6 @@ extension Bluetooth: CBPeripheralDelegate {
         guard let services = peripheral.services else { return }
    
         for service in services {
-//            print("#")
-//            print(services)
-//            print("#")
-//            print(service)
-//            print("#")
-//            print(peripheral)
-//            print("#")
             peripheral.discoverCharacteristics(nil, for: service)
         }
     }
@@ -138,82 +150,125 @@ extension Bluetooth: CBPeripheralDelegate {
     
     
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-//        print("#")
-//        print(service)
-//        print("#")
+
         
-//        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@peripheral is \(peripheral)@@86@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        
+//        print(peripheral)
+        
+//        print("@@@@@@@@@@@@@@@@@@")
+//        let uuid = service.characteristics
+//        print(uuid)
+        
+//        print(service.uuid.uuidString)
         guard let characteristics = service.characteristics else { return }
+
+//        print("yo")
         
-//        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@characteristics is \(characteristics)@@@@@@@@@@@@@@@@@@@@@")
-//        print("#")
-//        print(service)
-//        print("#")
+//        print(type(of:characteristics)) 배열인거 ㅇㅋ
+//        print(characteristics.count) 길이 4개 ㅇㅋ ff01 02 03 04
         
-            for characteristic in characteristics  {
-//                print("                                              ")
-//                print(characteristic)
-//                print("                                               ")
-                switch characteristic.properties {
-//
-                case .read:
-                    readCharacteristic = characteristic
-                case .write:
-                    writeCharacteristic = characteristic
-                case .notify:
-                    notifyCharacteristic = characteristic
-                    peripheral.setNotifyValue(true, for: characteristic)
-                case .indicate: break //print("indicate")
-                case .broadcast: break //print("broadcast")
-                default: break
-                
-                
-                
-//                            switch characteristic.uuid.uuidString{
-//                            case "FF01":
-//                                print("noti on2?")
-//
-//                                peripheral.setNotifyValue(true, for: characteristic)
-////                                print(characteristics)
-//                                print(characteristic)
-//                                print(characteristic.isNotifying)
-//                            case "FF02":
-//                                peripheral.setNotifyValue(true, for: characteristics[0])
-//
-//                            default:break
-//                            }
+//        print(characteristics)
+//        print(characteristics)
+        
+        
+        
+        for characteristic in characteristics  {
+//            print(characteristic.uuid.uuidString)
+
+            
+            if characteristic.uuid.uuidString == "FF01" {
+                notifyCharacteristic = characteristic
+
+                peripheral.setNotifyValue(true, for: characteristic)
             }
+            
+            if characteristic.uuid.uuidString == "FF02" {
+                print(characteristic.uuid.uuidString)
+                writeCharacteristic = characteristic
+                
+            }
+
         }
+        
+        
+//            for characteristic in characteristics  {
+//
+//                switch characteristic.properties {
+//
+//                case .read:
+//
+//                    readCharacteristic = characteristic
+//                    peripheral.readValue(for: characteristic)
+//                    print(readCharacteristic)
+//
+//                case .write:
+//                    writeCharacteristic = characteristic
+//
+//                case .notify:
+//                    notifyCharacteristic = characteristic
+//
+//                    peripheral.setNotifyValue(true, for: characteristic)
+//                case .indicate: break //print("indicate")
+//                case .broadcast: break //print("broadcast")
+//
+//                default: break
+//            }
+//        }
+        
     }
     
+    // peripheral으로 전송(쓰기
+//    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
+    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        print(characteristic)
+//                      peripheral.writeValue(data, for: characteristic)
+
+        print("characteristic.uuid.uuidString:- \(characteristic.uuid.uuidString)")
+        if let error = error{
+            print("error :< \(error)")
+            return
+        }
+        else{
+            print("@@@@@@@@@@@@@@@@@@")
+            print(characteristic)
+        }
+        
+
+    }
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor descriptor: CBDescriptor, error: Error?) {
-        print("@@@@@@@@@@@@@@@@@@")
-//        print(peripheral.writeValue(<#T##data: Data##Data#>, for: <#T##CBCharacteristic#>, type: <#T##CBCharacteristicWriteType#>))
-        func send(_ value: [UInt8]) {
-            guard let characteristic = writeCharacteristic else { return }
-            print(characteristic)
-            current?.writeValue(Data(value), for: characteristic, type: .withResponse)
-            print(value)
-            
-            print("send off fy")
+        print(peripheral)
+
         }
-        
-    }
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-//        print("@@@@@@@@@@@@@@@@@@")
-//        print(characteristic)
-//        print(peripheral)
-        peripheral.setNotifyValue(true, for: characteristic)
-//        print(characteristic.isNotifying)
-//        print("@@@@@@@@@@@@@@@@@@")
+        
+        if(characteristic.isNotifying){
+            print("get set ready notify")
+//            print(characteristic.isNotifying)
+            
+        } else {
+            peripheral.setNotifyValue(true, for: characteristic)
+            print(characteristic.isNotifying)
+
+}
     }
     
+    
+    // 센트럴로 데이터 전송(읽기
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        guard let value = characteristic.value else { return }
+        peripheral.readValue(for: characteristic)
+
+        guard let value = characteristic.value else { return print("메롱 ;<") }
         delegate?.value(data: value)
+//        print(value)
+
     }
+    
+//    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
+//        <#code#>
+//    }
+    
     func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
         delegate?.rssi(value: Int(truncating: RSSI))
     }

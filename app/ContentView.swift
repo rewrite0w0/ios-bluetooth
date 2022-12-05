@@ -33,6 +33,8 @@ struct ContentView: View {
     
     @State var editing = false
     
+    @State var str:String=""
+    
     
  // 보여지는 부분이다.
  // react로 치면 function SomePage{ return (이부분이다.)}
@@ -50,19 +52,28 @@ struct ContentView: View {
             if isConnected {
 //                Slider(value: Binding( get: { value }, set: {(newValue) in sendValue(newValue) } ), in: 0...100).padding(.horizontal)
 //                Button("toggle"){ state.toggle() }.buttonStyle(appButton())
-//                TextField("how to string convert byte", text: $string, onEditingChanged: { editing = $0 })
-//                    .onChange(of: string){ bluetooth.send(Array($0.utf8)) }
-//                    .textFieldStyle(appTextField(focused: $editing))
+                TextField("how to string convert byte", text: $string, onEditingChanged: { editing = $0 })
+                    .onChange(of: string){ // bluetooth.send(Array($0.utf8))
+                        print(Array($0.utf8))
+                    }
+                    .textFieldStyle(appTextField(focused: $editing))
                 Text("returned byte value from \(bluetooth.current?.name ?? ""): \(response)")
-//                Button("how to on notify"){bluetooth.peripherals}
                 Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDEEFFFE".utf8))}
-                Spacer()
+           
 //                Button("Print"){print(Array("FF0770AAAAAAAAAAAAFE".utf8))}
                 Text("returned string: \(String(data: response, encoding: .utf8) ?? "")")
-//                Button("qweqwe"){print(bluetooth.send)}
-                Text("rssi: \(rssi)")
+            
+//                Text("rssi: \(rssi)")
                 
-//                Button("NOTIFY"){bluetooth.peripheral(, didUpdateNotificationStateFor: , error: print("notify error"))}
+//                Button("bluetooth data view in log"){print("\(Date().description(with: .current))              ")}
+           
+                
+                TextField("how to send value", text:$str,  onCommit: {
+                    print(Array(str.utf8))
+                    bluetooth.send(Array(str.utf8))
+                    print(str)
+                } )
+                                
             }
             Spacer()
         }.sheet(isPresented: $presented){ ScanView(bluetooth: bluetooth, presented: $presented, list: $list, isConnected: $isConnected) }
@@ -72,6 +83,8 @@ struct ContentView: View {
     func sendValue(_ value: Float) {
         if Int(value) != Int(self.value) {
             guard let sendValue = map(Int(value), of: 0...100, to: 0...255) else { return }
+//            print([UInt8(state.int), UInt8(sendValue)])
+            print(sendValue)
             bluetooth.send([UInt8(state.int), UInt8(sendValue)])
         }
         self.value = value
@@ -111,7 +124,7 @@ extension ContentView: BluetoothProtocol {
     
     func list(list: [Bluetooth.Device]) { self.list = list }
     
-    func value(data: Data) { response = data; print(response) }
+    func value(data: Data) { response = data; /* print("res \(response)")*/ }
     
     func rssi(value: Int) { rssi = value;  }
 }
