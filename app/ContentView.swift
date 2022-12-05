@@ -52,25 +52,25 @@ struct ContentView: View {
             if isConnected {
 //                Slider(value: Binding( get: { value }, set: {(newValue) in sendValue(newValue) } ), in: 0...100).padding(.horizontal)
 //                Button("toggle"){ state.toggle() }.buttonStyle(appButton())
-                TextField("how to string convert byte", text: $string, onEditingChanged: { editing = $0 })
-                    .onChange(of: string){
-                        bluetooth.send(Array("FF0303\($0)FE".utf8))
-                        print(Array("FF0303\($0)FE".utf8))
-                    }
-                    .textFieldStyle(appTextField(focused: $editing))
+//                TextField("how to string convert byte", text: $string, onEditingChanged: { editing = $0 })
+//                    .onChange(of: string){
+//                        bluetooth.send(Array("FF0303\($0)FE".utf8))
+//                        print(Array("FF0303\($0)FE".utf8))
+//                    }
+//                    .textFieldStyle(appTextField(focused: $editing))
                 Text("returned byte value from \(bluetooth.current?.name ?? ""): \(response)")
-                Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDEEFFFE".utf8))}
+                Button("하드코딩 MAC 전송"){bluetooth.send(Array("FF0770AABBCCDDEEFFFE".utf8))}
            
 //                Button("Print"){print(UIDevice.currentDevice().identifierForVendor)}
                 Text("returned string: \(String(data: response, encoding: .utf8) ?? "")")
-                Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDAAFFFE".utf8))}
+                Button("기기 MAC 전송"){bluetooth.send(Array("FF0770AABBCCDDAAFFFE".utf8))}
 
             
 //                Text("rssi: \(rssi)")
                 
-                Button("bluetooth data view in log"){
+                Button("시간 전송"){
 //                    print(Date().description(with: .current))
-                    let now = Date()
+//                    let now = Date()
                     let today = Date()
 //print(today)
                     
@@ -98,7 +98,7 @@ struct ContentView: View {
                 }
            
                 
-                TextField("how to send value", text:$str,  onCommit: {
+                TextField("pin 입력", text:$str,  onCommit: {
                     bluetooth.send(Array("FF0303\(str)FE".utf8))
                     print(Array("FF0303\(str)FE".utf8))
                     
@@ -106,6 +106,7 @@ struct ContentView: View {
                 } )
 //                Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDEEFFFE".utf8))}
 
+                
             }
             Spacer()
         }.sheet(isPresented: $presented){ ScanView(bluetooth: bluetooth, presented: $presented, list: $list, isConnected: $isConnected) }
