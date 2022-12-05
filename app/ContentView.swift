@@ -53,27 +53,51 @@ struct ContentView: View {
 //                Slider(value: Binding( get: { value }, set: {(newValue) in sendValue(newValue) } ), in: 0...100).padding(.horizontal)
 //                Button("toggle"){ state.toggle() }.buttonStyle(appButton())
                 TextField("how to string convert byte", text: $string, onEditingChanged: { editing = $0 })
-                    .onChange(of: string){ // bluetooth.send(Array($0.utf8))
-                        print(Array($0.utf8))
+                    .onChange(of: string){
+                        bluetooth.send(Array("FF0303\($0)FE".utf8))
+                        print(Array("FF0303\($0)FE".utf8))
                     }
                     .textFieldStyle(appTextField(focused: $editing))
                 Text("returned byte value from \(bluetooth.current?.name ?? ""): \(response)")
                 Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDEEFFFE".utf8))}
            
-//                Button("Print"){print(Array("FF0770AAAAAAAAAAAAFE".utf8))}
+//                Button("Print"){print(UIDevice.currentDevice().identifierForVendor)}
                 Text("returned string: \(String(data: response, encoding: .utf8) ?? "")")
+                Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDAAFFFE".utf8))}
+
             
 //                Text("rssi: \(rssi)")
                 
-//                Button("bluetooth data view in log"){print("\(Date().description(with: .current))              ")}
+                Button("bluetooth data view in log"){
+                    print(Date().description(with: .current))
+                    let today = Date()
+
+                    let year = (Calendar.current.component(.year, from: today)) - 2000
+                    
+                    let month = (Calendar.current.component(.month, from: today))
+                    let day = (Calendar.current.component(.day, from: today))
+                    let hours   = (Calendar.current.component(.hour, from: today))
+                    let minutes = (Calendar.current.component(.minute, from: today))
+                    let seconds = (Calendar.current.component(.second, from: today))
+                    print(hours)
+                    print(minutes)
+                    print(seconds)
+                    print("FF0612\(year)\(month)\(day)\(hours)\(minutes)FE")
+                    print(Array("FF0612\(year)\(month)\(day)\(hours)\(minutes)FE".utf8))
+                    bluetooth.send(Array("FF0612\(year)\(month)\(day)\(hours)\(minutes)FE".utf8))
+//                    bluetooth.send(Array("FF06121010101010FE".utf8))
+
+                }
            
                 
                 TextField("how to send value", text:$str,  onCommit: {
+                    bluetooth.send(Array("FF0303\(str)FE".utf8))
+                    print(Array("FF0303\(str)FE".utf8))
+                    
                     print(Array(str.utf8))
-                    bluetooth.send(Array(str.utf8))
-                    print(str)
                 } )
-                                
+//                Button("MAC"){bluetooth.send(Array("FF0770AABBCCDDEEFFFE".utf8))}
+
             }
             Spacer()
         }.sheet(isPresented: $presented){ ScanView(bluetooth: bluetooth, presented: $presented, list: $list, isConnected: $isConnected) }

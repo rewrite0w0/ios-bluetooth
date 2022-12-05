@@ -61,14 +61,14 @@ final class Bluetooth: NSObject {
     }
     
     func send(_ value: [UInt8]) {
-//        print("Read")
-//        print(readCharacteristic)
-//        print("noti")
-//        print(notifyCharacteristic)
-//        print("write")
-//        print(writeCharacteristic)
-//        print("qwer")
-//        print(qwer)
+        print("Read")
+        print(readCharacteristic)
+        print("noti")
+        print(notifyCharacteristic)
+        print("write")
+        print(writeCharacteristic)
+
+        print(value)
         
     // 여기부터 문제임
         // hex 보내기
