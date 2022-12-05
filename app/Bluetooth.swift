@@ -61,12 +61,12 @@ final class Bluetooth: NSObject {
     }
     
     func send(_ value: [UInt8]) {
-        print("Read")
-        print(readCharacteristic)
-        print("noti")
-        print(notifyCharacteristic)
-        print("write")
-        print(writeCharacteristic)
+//        print("Read")
+//        print(readCharacteristic)
+//        print("noti")
+//        print(notifyCharacteristic)
+//        print("write")
+//        print(writeCharacteristic)
 
         print(value)
         
@@ -258,18 +258,25 @@ extension Bluetooth: CBPeripheralDelegate {
     // 센트럴로 데이터 전송(읽기
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         peripheral.readValue(for: characteristic)
-
+//        print(characteristic.value)
+//        print(characteristic)
         guard let value = characteristic.value else { return print("메롱 ;<") }
         delegate?.value(data: value)
 //        print(value)
 
     }
     
-//    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
-//        <#code#>
-//    }
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor descriptor: CBDescriptor, error: Error?) {
+        peripheral.readValue(for: descriptor)
+//        print(descriptor)
+        
+        guard let value = descriptor.value else { return print("메롱 ;<") }
+//        delegate?.value(data: value)
+//        print(value)
+    }
     
     func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
         delegate?.rssi(value: Int(truncating: RSSI))
     }
+    
 }

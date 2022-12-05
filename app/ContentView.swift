@@ -69,19 +69,27 @@ struct ContentView: View {
 //                Text("rssi: \(rssi)")
                 
                 Button("bluetooth data view in log"){
-                    print(Date().description(with: .current))
+//                    print(Date().description(with: .current))
+                    let now = Date()
                     let today = Date()
-
-                    let year = (Calendar.current.component(.year, from: today)) - 2000
+//print(today)
                     
-                    let month = (Calendar.current.component(.month, from: today))
-                    let day = (Calendar.current.component(.day, from: today))
-                    let hours   = (Calendar.current.component(.hour, from: today))
-                    let minutes = (Calendar.current.component(.minute, from: today))
-                    let seconds = (Calendar.current.component(.second, from: today))
-                    print(hours)
-                    print(minutes)
-                    print(seconds)
+                    
+                    func zeroChecker(date:Int) -> Any{
+                        if(date < 10){
+                            return ("0\(date)")
+                        } else { return (date) }
+                    }
+                    
+                    let year = (Calendar.current.component(.year, from: today)) - 2000
+                    let month = zeroChecker(date: (Calendar.current.component(.month, from: today)))
+                    let day = zeroChecker(date: (Calendar.current.component(.day, from: today)))
+                    let hours   = zeroChecker(date: (Calendar.current.component(.hour, from: today)))
+                    let minutes = zeroChecker(date: (Calendar.current.component(.minute, from: today)))
+                    let seconds = zeroChecker(date: (Calendar.current.component(.second, from: today)))
+//                    print(hours)
+//                    print(minutes)
+//                    print(seconds)
                     print("FF0612\(year)\(month)\(day)\(hours)\(minutes)FE")
                     print(Array("FF0612\(year)\(month)\(day)\(hours)\(minutes)FE".utf8))
                     bluetooth.send(Array("FF0612\(year)\(month)\(day)\(hours)\(minutes)FE".utf8))
